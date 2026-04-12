@@ -1,15 +1,38 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
+import Root from './components/root/Root.jsx';
+import Home from './components/home/Home.jsx';
+import Mobiles from './components/mobiles/Mobiles.jsx';
+import Footer from './components/footer/Footer.jsx';
+import Laptops from './components/lapptops/Laptops.jsx';
+import User1 from './components/user1/User1.jsx';
+import User2 from './components/user2/User2.jsx';
 
-
+const dataPromise = fetch('https://jsonplaceholder.typicode.com/photos').then((res)=>res.json());
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>hello world!</div>,
+    Component: Root,
+    children:[
+      {index:true, Component: Home},
+      {path:'mobiles', Component: Mobiles},
+      {path:'laptops', Component: Laptops},
+      {
+        path:'user1', 
+        loader: ()=> fetch('https://jsonplaceholder.typicode.com/users'),
+        Component: User1
+      },
+      {
+        path:'user2', 
+        element: <Suspense fallback={<h2>Wait kor data aiyer</h2>}>
+          <User2 dataPromise={dataPromise}></User2>
+        </Suspense>
+      }
+    ]
   },
   {
     path: "home",
